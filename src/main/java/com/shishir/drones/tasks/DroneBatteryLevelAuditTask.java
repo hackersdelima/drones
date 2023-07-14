@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class DroneBatteryLevelTask {
+public class DroneBatteryLevelAuditTask {
     private final AuditLogRepository auditLogRepository;
     private final DroneService droneService;
 
     @Autowired
-    public DroneBatteryLevelTask(AuditLogRepository auditLogRepository, DroneService droneService) {
+    public DroneBatteryLevelAuditTask(AuditLogRepository auditLogRepository, DroneService droneService) {
         this.auditLogRepository = auditLogRepository;
         this.droneService = droneService;
     }
