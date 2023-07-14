@@ -61,7 +61,7 @@ public class DroneServiceImpl implements DroneService {
         if (droneOptional.isPresent()) {
             return droneOptional.get().getBatteryCapacity();
         }
-
+//todo throw drone not found
         throw new RuntimeException();
     }
 
