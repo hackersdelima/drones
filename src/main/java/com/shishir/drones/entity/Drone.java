@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,4 +24,6 @@ public class Drone {
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false, length = 10)
     private State state;
+    @OneToMany(mappedBy = "drone", cascade = CascadeType.ALL)
+    private List<Medication> medications;
 }

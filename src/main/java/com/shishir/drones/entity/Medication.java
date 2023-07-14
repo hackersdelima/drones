@@ -19,4 +19,8 @@ public class Medication {
     private String code;
     @Column(name = "image_url")
     private String image;
+
+    @ManyToOne
+    @JoinColumn(name = "drone_id")
+    private Drone drone;
 }
