@@ -1,10 +1,10 @@
 package com.shishir.drones.controller;
 
-import com.shishir.drones.dto.DroneRequest;
-import com.shishir.drones.dto.DroneResponse;
-import com.shishir.drones.dto.GenericResponseDto;
+import com.shishir.drones.dto.*;
 import com.shishir.drones.entity.Drone;
+import com.shishir.drones.entity.Medication;
 import com.shishir.drones.mapper.DroneMapper;
+import com.shishir.drones.mapper.MedicationMapper;
 import com.shishir.drones.service.DroneService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,13 @@ public class DispatchController {
     private final DroneService droneService;
     private final DroneMapper droneMapper;
 
+    private final MedicationMapper medicationMapper;
+
     @Autowired
-    public DispatchController(DroneService droneService, DroneMapper droneMapper) {
+    public DispatchController(DroneService droneService, DroneMapper droneMapper, MedicationMapper medicationMapper) {
         this.droneService = droneService;
         this.droneMapper = droneMapper;
+        this.medicationMapper = medicationMapper;
     }
 
     @PostMapping("/drones")
@@ -78,5 +81,27 @@ public class DispatchController {
             ), HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/drones/{serialNumber}/medications")
+    public ResponseEntity<GenericResponseDto<List<MedicationResponse>>> loadMedications(@PathVariable String serialNumber, @RequestBody List<MedicationRequest> request) {
+        List<Medication> medications = medicationMapper.toMedications(request);
+        if (!medications.isEmpty()) {
+            Optional<Drone> droneOptional = droneService.loadMedications(serialNumber, medications);
+            if (droneOptional.isPresent()) {
+                return new ResponseEntity<>(new GenericResponseDto<>(
+                        HttpStatus.OK.value(),
+                        MEDICATIONS_LOADED,
+                        medicationMapper.toMedicationResponses(droneOptional.get().getMedications())
+                ), HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>(new GenericResponseDto<>(
+                HttpStatus.BAD_REQUEST.value(),
+                MEDICATIONS_LOADING_FAILED,
+                null
+        ), HttpStatus.BAD_REQUEST);
+    }
+
 
 }

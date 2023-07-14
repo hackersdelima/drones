@@ -2,6 +2,7 @@ package com.shishir.drones.service;
 
 import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.DroneRepository;
+import com.shishir.drones.entity.Medication;
 import com.shishir.drones.enums.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,5 +58,24 @@ public class DroneServiceImpl implements DroneService {
         }
 
         throw new RuntimeException();
+    }
+
+    @Override
+    public Optional<Drone> loadMedications(final String serialNumber,final List<Medication> medications) {
+        Optional<Drone> droneOptional = this.getOne(serialNumber);
+        if(droneOptional.isPresent()){
+            Drone drone = droneOptional.get();
+            if(drone.getMedications()!=null){
+                List<Medication> existingMedications = drone.getMedications();
+                existingMedications.addAll(medications);
+                drone.setMedications(existingMedications);
+            }else{
+                drone.setMedications(medications);
+            }
+
+            return Optional.of(droneRepository.save(drone));
+        }
+//todo throw drone not found
+        return Optional.empty();
     }
 }
