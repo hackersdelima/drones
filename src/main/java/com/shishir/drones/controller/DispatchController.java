@@ -103,5 +103,15 @@ public class DispatchController {
         ), HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping("/drones/{serialNumber}/medications")
+    public ResponseEntity<GenericResponseDto<List<MedicationResponse>>> getDroneMedications(@PathVariable String serialNumber) {
+        List<Medication> medications = droneService.getMedications(serialNumber);
+
+        return new ResponseEntity<>(new GenericResponseDto<>(
+                HttpStatus.OK.value(),
+                MEDICATIONS_FOUND,
+                medicationMapper.toMedicationResponses(medications)
+        ), HttpStatus.OK);
+    }
 
 }

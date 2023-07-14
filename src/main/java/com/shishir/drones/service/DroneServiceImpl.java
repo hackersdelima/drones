@@ -7,6 +7,7 @@ import com.shishir.drones.enums.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -77,5 +78,16 @@ public class DroneServiceImpl implements DroneService {
         }
 //todo throw drone not found
         return Optional.empty();
+    }
+
+    @Override
+    public List<Medication> getMedications(final String serialNumber) {
+        Optional<Drone> droneOptional = this.getOne(serialNumber);
+        if(droneOptional.isPresent()){
+            return droneOptional.get().getMedications();
+        }
+
+        //todo throw drone not found
+        return new ArrayList<>();
     }
 }

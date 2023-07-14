@@ -12,4 +12,6 @@ public interface DroneService extends GenericCrudService<Drone, String> {
     double getBatteryLevel(final String serialNumber);
 
     Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications);
+
+    List<Medication> getMedications(final String serialNumber);
 }
