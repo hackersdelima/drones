@@ -36,6 +36,11 @@ public class DroneServiceImpl implements DroneService {
     }
 
     @Override
+    public List<Drone> saveAll(List<Drone> entities) {
+        return droneRepository.saveAll(entities);
+    }
+
+    @Override
     public Optional<Drone> save(Drone entity) {
         return Optional.of(droneRepository.save(entity));
     }
