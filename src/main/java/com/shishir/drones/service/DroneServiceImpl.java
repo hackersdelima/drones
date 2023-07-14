@@ -48,4 +48,14 @@ public class DroneServiceImpl implements DroneService {
         State[] states = {State.IDLE, State.DELIVERED};
         return droneRepository.findAllByStateIn(Arrays.asList(states));
     }
+
+    @Override
+    public double getBatteryLevel(final String serialNumber) {
+        Optional<Drone> droneOptional = this.getOne(serialNumber);
+        if(droneOptional.isPresent()){
+            return droneOptional.get().getBatteryCapacity();
+        }
+
+        throw new RuntimeException();
+    }
 }

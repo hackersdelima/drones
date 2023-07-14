@@ -59,4 +59,24 @@ public class DispatchController {
         ), HttpStatus.OK);
     }
 
+    @GetMapping("/drones/{serialNumber}/battery-level")
+    public ResponseEntity<GenericResponseDto<Double>> getDroneBatteryLevel(@PathVariable String serialNumber) {
+        try {
+            double batteryLevel = droneService.getBatteryLevel(serialNumber);
+
+            return new ResponseEntity<>(new GenericResponseDto<>(
+                    HttpStatus.OK.value(),
+                    DRONE_BATTERY_LEVEL_FOUND,
+                    batteryLevel
+            ), HttpStatus.OK);
+        } catch (Exception ex) {
+            log.error("Exception in get drone battery level", ex);
+            return new ResponseEntity<>(new GenericResponseDto<>(
+                    HttpStatus.NOT_FOUND.value(),
+                    DRONE_NOT_FOUND,
+                    null
+            ), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

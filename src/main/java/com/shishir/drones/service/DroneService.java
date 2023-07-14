@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface DroneService extends GenericCrudService<Drone, String> {
     List<Drone> getAvailableDrones();
+
+    double getBatteryLevel(final String serialNumber);
 }
