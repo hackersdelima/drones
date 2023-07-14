@@ -56,6 +56,7 @@ public class DispatchController {
 
     @GetMapping("/drones/available")
     public ResponseEntity<GenericResponseDto<List<DroneResponse>>> getAvailableDronesForLoading() {
+        log.info("View available drones requested.");
         List<Drone> availableDrones = droneService.getAvailableDrones();
 
         return new ResponseEntity<>(new GenericResponseDto<>(
@@ -67,6 +68,7 @@ public class DispatchController {
 
     @GetMapping("/drones/{serialNumber}/battery-level")
     public ResponseEntity<GenericResponseDto<Double>> getDroneBatteryLevel(@PathVariable String serialNumber) {
+        log.info("View battery level for drone {} requested.", serialNumber);
         try {
             double batteryLevel = droneService.getBatteryLevel(serialNumber);
 
@@ -87,6 +89,7 @@ public class DispatchController {
 
     @PostMapping("/drones/{serialNumber}/medications")
     public ResponseEntity<GenericResponseDto<List<MedicationResponse>>> loadMedications(@PathVariable String serialNumber, @RequestBody List<MedicationRequest> request) {
+        log.info("Load medications to drone {} requested.", serialNumber);
         try {
             List<Medication> medications = medicationMapper.toMedications(request);
             if (!medications.isEmpty()) {
@@ -124,6 +127,7 @@ public class DispatchController {
 
     @GetMapping("/drones/{serialNumber}/medications")
     public ResponseEntity<GenericResponseDto<List<MedicationResponse>>> getDroneMedications(@PathVariable String serialNumber) {
+        log.info("Get medications of drone {} requested.", serialNumber);
         List<Medication> medications = droneService.getMedications(serialNumber);
 
         return new ResponseEntity<>(new GenericResponseDto<>(
