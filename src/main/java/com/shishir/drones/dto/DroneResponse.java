@@ -5,5 +5,5 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DroneRegisterResponse extends DroneRegisterRequest {
+public class DroneResponse extends DroneRequest {
 }

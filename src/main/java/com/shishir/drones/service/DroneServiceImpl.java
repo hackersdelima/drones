@@ -2,9 +2,11 @@ package com.shishir.drones.service;
 
 import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.DroneRepository;
+import com.shishir.drones.enums.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,5 +41,11 @@ public class DroneServiceImpl implements DroneService {
     @Override
     public List<Drone> getAll() {
         return droneRepository.findAll();
+    }
+
+    @Override
+    public List<Drone> getAvailableDrones() {
+        State[] states = {State.IDLE, State.DELIVERED};
+        return droneRepository.findAllByStateIn(Arrays.asList(states));
     }
 }

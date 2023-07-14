@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DroneRegisterRequest {
+public class DroneRequest {
     private String serialNumber;
     private String model;
     private double weightLimit; //in grams
