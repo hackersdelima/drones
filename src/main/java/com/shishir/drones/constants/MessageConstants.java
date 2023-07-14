@@ -14,4 +14,6 @@ public class MessageConstants {
     public static final String DRONE_LOW_BATTERY_CAPACITY = "Drone has battery capacity lower than %s percentage.";
     public static final String DRONE_WEIGHT_LIMIT_EXCEEDED = "Weight limit exceeded.";
     public static final String DRONE_NOT_FOUND_FOR_SERIAL_NUMBER = "Drone not found for serialNumber: %s";
+    public static final String INVALID_NAME = "Invalid Name: %s (allowed only letters, numbers, ‘-‘, ‘_’)";
+    public static final String INVALID_CODE = "Invalid Code: %s (allowed only upper case letters, underscore and numbers)";
 }

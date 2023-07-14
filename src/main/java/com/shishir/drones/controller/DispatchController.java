@@ -3,12 +3,11 @@ package com.shishir.drones.controller;
 import com.shishir.drones.dto.*;
 import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.Medication;
-import com.shishir.drones.exception.DroneNotFoundException;
-import com.shishir.drones.exception.LowBatteryCapacityException;
-import com.shishir.drones.exception.WeightLimitExceededException;
+import com.shishir.drones.exception.*;
 import com.shishir.drones.mapper.DroneMapper;
 import com.shishir.drones.mapper.MedicationMapper;
 import com.shishir.drones.service.DroneService;
+import com.shishir.drones.validation.DroneLoadingValidationComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,12 +27,14 @@ public class DispatchController {
     private final DroneMapper droneMapper;
 
     private final MedicationMapper medicationMapper;
+    private final DroneLoadingValidationComponent droneLoadingValidationComponent;
 
     @Autowired
-    public DispatchController(DroneService droneService, DroneMapper droneMapper, MedicationMapper medicationMapper) {
+    public DispatchController(DroneService droneService, DroneMapper droneMapper, MedicationMapper medicationMapper, DroneLoadingValidationComponent droneLoadingValidationComponent) {
         this.droneService = droneService;
         this.droneMapper = droneMapper;
         this.medicationMapper = medicationMapper;
+        this.droneLoadingValidationComponent = droneLoadingValidationComponent;
     }
 
     @PostMapping("/drones")
@@ -91,6 +92,8 @@ public class DispatchController {
     public ResponseEntity<GenericResponseDto<List<MedicationResponse>>> loadMedications(@PathVariable String serialNumber, @RequestBody List<MedicationRequest> request) {
         log.info("Load medications to drone {} requested.", serialNumber);
         try {
+            droneLoadingValidationComponent.validateMedicationRequest(request);
+
             List<Medication> medications = medicationMapper.toMedications(request);
             if (!medications.isEmpty()) {
                 Optional<Drone> droneOptional = droneService.loadMedications(serialNumber, medications);
@@ -102,6 +105,13 @@ public class DispatchController {
                     ), HttpStatus.OK);
                 }
             }
+        } catch (InvalidCodeException | InvalidNameException invalidEx) {
+            log.error("Exception", invalidEx);
+            return new ResponseEntity<>(new GenericResponseDto<>(
+                    HttpStatus.BAD_REQUEST.value(),
+                    invalidEx.getMessage(),
+                    null
+            ), HttpStatus.BAD_REQUEST);
         } catch (DroneNotFoundException ex) {
             log.error("Exception", ex);
             return new ResponseEntity<>(new GenericResponseDto<>(
