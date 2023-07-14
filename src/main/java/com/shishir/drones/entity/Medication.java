@@ -1,5 +1,6 @@
 package com.shishir.drones.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ public class Medication {
     private String image;
 
     @ManyToOne
-    @JoinColumn(name = "drone_id")
+    @JoinColumn(name = "drone_serial_number")
+    @JsonIgnore
     private Drone drone;
 }

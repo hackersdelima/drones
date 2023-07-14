@@ -1,8 +1,10 @@
 package com.shishir.drones.service;
 
+import com.shishir.drones.dto.MedicationResponse;
 import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.DroneRepository;
 import com.shishir.drones.entity.Medication;
+import com.shishir.drones.entity.MedicationRepository;
 import com.shishir.drones.enums.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,12 @@ import java.util.Optional;
 @Service
 public class DroneServiceImpl implements DroneService {
     private final DroneRepository droneRepository;
+    private final MedicationRepository medicationRepository;
 
     @Autowired
-    public DroneServiceImpl(DroneRepository droneRepository) {
+    public DroneServiceImpl(DroneRepository droneRepository, MedicationRepository medicationRepository) {
         this.droneRepository = droneRepository;
+        this.medicationRepository = medicationRepository;
     }
 
     @Override
@@ -82,12 +86,6 @@ public class DroneServiceImpl implements DroneService {
 
     @Override
     public List<Medication> getMedications(final String serialNumber) {
-        Optional<Drone> droneOptional = this.getOne(serialNumber);
-        if(droneOptional.isPresent()){
-            return droneOptional.get().getMedications();
-        }
-
-        //todo throw drone not found
-        return new ArrayList<>();
+        return medicationRepository.findAllByDroneSerialNumber(serialNumber);
     }
 }
