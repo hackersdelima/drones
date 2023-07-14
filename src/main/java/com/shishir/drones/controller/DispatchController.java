@@ -4,6 +4,7 @@ import com.shishir.drones.dto.*;
 import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.Medication;
 import com.shishir.drones.exception.DroneNotFoundException;
+import com.shishir.drones.exception.LowBatteryCapacityException;
 import com.shishir.drones.mapper.DroneMapper;
 import com.shishir.drones.mapper.MedicationMapper;
 import com.shishir.drones.service.DroneService;
@@ -103,6 +104,13 @@ public class DispatchController {
                         DRONE_NOT_FOUND,
                         null
                 ), HttpStatus.NOT_FOUND);
+            } catch (LowBatteryCapacityException lex) {
+                log.error("Exception", lex);
+                return new ResponseEntity<>(new GenericResponseDto<>(
+                        HttpStatus.BAD_REQUEST.value(),
+                        DONE_LOW_BATTERY_CAPACITY,
+                        null
+                ), HttpStatus.BAD_REQUEST);
             }
         }
 

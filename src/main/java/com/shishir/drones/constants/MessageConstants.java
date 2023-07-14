@@ -13,6 +13,7 @@ public class MessageConstants {
     public static final String MEDICATIONS_LOADED = "Medications Loaded.";
     public static final String MEDICATIONS_LOADING_FAILED = "Medications Loading Failed.";
     public static final String MEDICATIONS_FOUND = "Medications Found.";
+    public static final String DONE_LOW_BATTERY_CAPACITY = "Low battery capacity.";
 
 
 }

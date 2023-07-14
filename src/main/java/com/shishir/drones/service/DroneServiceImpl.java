@@ -6,6 +6,8 @@ import com.shishir.drones.entity.Medication;
 import com.shishir.drones.entity.MedicationRepository;
 import com.shishir.drones.enums.State;
 import com.shishir.drones.exception.DroneNotFoundException;
+import com.shishir.drones.exception.LowBatteryCapacityException;
+import com.shishir.drones.validation.DroneLoadingValidationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +23,13 @@ public class DroneServiceImpl implements DroneService {
     private final DroneRepository droneRepository;
     private final MedicationRepository medicationRepository;
 
+    private final DroneLoadingValidationComponent droneLoadingValidationComponent;
+
     @Autowired
-    public DroneServiceImpl(DroneRepository droneRepository, MedicationRepository medicationRepository) {
+    public DroneServiceImpl(DroneRepository droneRepository, MedicationRepository medicationRepository, DroneLoadingValidationComponent droneLoadingValidationComponent) {
         this.droneRepository = droneRepository;
         this.medicationRepository = medicationRepository;
+        this.droneLoadingValidationComponent = droneLoadingValidationComponent;
     }
 
     @Override
@@ -67,10 +72,12 @@ public class DroneServiceImpl implements DroneService {
     }
 
     @Override
-    public Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications) throws DroneNotFoundException {
+    public Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications) throws DroneNotFoundException, LowBatteryCapacityException {
         Optional<Drone> droneOptional = this.getOne(serialNumber);
         if (droneOptional.isPresent()) {
             Drone drone = droneOptional.get();
+
+            droneLoadingValidationComponent.validate(drone);
 
             List<Medication> existingMedications = drone.getMedications();
 
@@ -80,6 +87,7 @@ public class DroneServiceImpl implements DroneService {
                 existingMedications = new ArrayList<>(medications);
                 drone.setMedications(existingMedications);
             }
+            drone.setState(State.LOADED);
 
             medications.forEach(medication -> medication.setDrone(drone));
 
