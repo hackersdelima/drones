@@ -18,6 +18,8 @@ public class Medication {
     private String name;
     @Column(name = "code")
     private String code;
+    @Column(name = "weight")
+    private double weight;
     @Column(name = "image_url")
     private String image;
 

@@ -5,6 +5,7 @@ import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.Medication;
 import com.shishir.drones.exception.DroneNotFoundException;
 import com.shishir.drones.exception.LowBatteryCapacityException;
+import com.shishir.drones.exception.WeightLimitExceededException;
 import com.shishir.drones.mapper.DroneMapper;
 import com.shishir.drones.mapper.MedicationMapper;
 import com.shishir.drones.service.DroneService;
@@ -109,6 +110,13 @@ public class DispatchController {
                 return new ResponseEntity<>(new GenericResponseDto<>(
                         HttpStatus.BAD_REQUEST.value(),
                         DONE_LOW_BATTERY_CAPACITY,
+                        null
+                ), HttpStatus.BAD_REQUEST);
+            } catch (WeightLimitExceededException wex) {
+                log.error("Exception", wex);
+                return new ResponseEntity<>(new GenericResponseDto<>(
+                        HttpStatus.BAD_REQUEST.value(),
+                        DONE_WEIGHT_LIMIT_EXCEEDED,
                         null
                 ), HttpStatus.BAD_REQUEST);
             }

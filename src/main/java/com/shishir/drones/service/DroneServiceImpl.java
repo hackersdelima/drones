@@ -7,6 +7,7 @@ import com.shishir.drones.entity.MedicationRepository;
 import com.shishir.drones.enums.State;
 import com.shishir.drones.exception.DroneNotFoundException;
 import com.shishir.drones.exception.LowBatteryCapacityException;
+import com.shishir.drones.exception.WeightLimitExceededException;
 import com.shishir.drones.validation.DroneLoadingValidationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,12 +73,12 @@ public class DroneServiceImpl implements DroneService {
     }
 
     @Override
-    public Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications) throws DroneNotFoundException, LowBatteryCapacityException {
+    public Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications) throws DroneNotFoundException, LowBatteryCapacityException, WeightLimitExceededException {
         Optional<Drone> droneOptional = this.getOne(serialNumber);
         if (droneOptional.isPresent()) {
             Drone drone = droneOptional.get();
 
-            droneLoadingValidationComponent.validate(drone);
+            droneLoadingValidationComponent.validate(medications, drone);
 
             List<Medication> existingMedications = drone.getMedications();
 

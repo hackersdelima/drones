@@ -8,5 +8,7 @@ import lombok.Setter;
 public class MedicationRequest {
     private String name;
     private String code;
+
+    private double weight;
     private String image;
 }
