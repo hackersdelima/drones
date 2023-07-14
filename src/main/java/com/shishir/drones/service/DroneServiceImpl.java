@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -70,13 +71,17 @@ public class DroneServiceImpl implements DroneService {
         Optional<Drone> droneOptional = this.getOne(serialNumber);
         if (droneOptional.isPresent()) {
             Drone drone = droneOptional.get();
-            if (drone.getMedications() != null) {
-                List<Medication> existingMedications = drone.getMedications();
+
+            List<Medication> existingMedications = drone.getMedications();
+
+            if (existingMedications != null) {
                 existingMedications.addAll(medications);
-                drone.setMedications(existingMedications);
             } else {
-                drone.setMedications(medications);
+                existingMedications = new ArrayList<>(medications);
+                drone.setMedications(existingMedications);
             }
+
+            medications.forEach(medication -> medication.setDrone(drone));
 
             return Optional.of(droneRepository.save(drone));
         }
