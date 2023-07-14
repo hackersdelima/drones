@@ -1,6 +1,5 @@
 package com.shishir.drones.service;
 
-import com.shishir.drones.dto.MedicationResponse;
 import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.DroneRepository;
 import com.shishir.drones.entity.Medication;
@@ -9,11 +8,12 @@ import com.shishir.drones.enums.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class DroneServiceImpl implements DroneService {
     private final DroneRepository droneRepository;
@@ -58,7 +58,7 @@ public class DroneServiceImpl implements DroneService {
     @Override
     public double getBatteryLevel(final String serialNumber) {
         Optional<Drone> droneOptional = this.getOne(serialNumber);
-        if(droneOptional.isPresent()){
+        if (droneOptional.isPresent()) {
             return droneOptional.get().getBatteryCapacity();
         }
 
@@ -66,15 +66,15 @@ public class DroneServiceImpl implements DroneService {
     }
 
     @Override
-    public Optional<Drone> loadMedications(final String serialNumber,final List<Medication> medications) {
+    public Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications) {
         Optional<Drone> droneOptional = this.getOne(serialNumber);
-        if(droneOptional.isPresent()){
+        if (droneOptional.isPresent()) {
             Drone drone = droneOptional.get();
-            if(drone.getMedications()!=null){
+            if (drone.getMedications() != null) {
                 List<Medication> existingMedications = drone.getMedications();
                 existingMedications.addAll(medications);
                 drone.setMedications(existingMedications);
-            }else{
+            } else {
                 drone.setMedications(medications);
             }
 
