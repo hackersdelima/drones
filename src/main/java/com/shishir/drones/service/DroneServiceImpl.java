@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DroneServiceImpl implements GenericCrudService<Drone, String> {
+public class DroneServiceImpl implements DroneService {
     private final DroneRepository droneRepository;
 
     @Autowired
