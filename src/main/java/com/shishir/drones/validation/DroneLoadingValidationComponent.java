@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.shishir.drones.constants.MessageConstants.DRONE_LOW_BATTERY_CAPACITY;
+import static com.shishir.drones.constants.MessageConstants.DRONE_WEIGHT_LIMIT_EXCEEDED;
+
 @Component
 public class DroneLoadingValidationComponent {
     public void validate(List<Medication> medications, Drone drone) throws LowBatteryCapacityException, WeightLimitExceededException {
@@ -16,8 +19,9 @@ public class DroneLoadingValidationComponent {
     }
 
     public void hasBatteryCapacity(Drone drone) throws LowBatteryCapacityException {
-        if (drone.getBatteryCapacity() < 25) {
-            throw new LowBatteryCapacityException("Drone has battery capacity lower than 25%");
+        double limit =25;
+        if (drone.getBatteryCapacity() < limit) {
+            throw new LowBatteryCapacityException(String.format(DRONE_LOW_BATTERY_CAPACITY, limit));
         }
     }
 
@@ -25,7 +29,7 @@ public class DroneLoadingValidationComponent {
         double requestWeight = medications.stream().mapToDouble(Medication::getWeight).sum();
         double droneWeightCapacity = drone.getWeightLimit();
         if (requestWeight > droneWeightCapacity) {
-            throw new WeightLimitExceededException("Weight limit exceeded.");
+            throw new WeightLimitExceededException(DRONE_WEIGHT_LIMIT_EXCEEDED);
         }
     }
 }

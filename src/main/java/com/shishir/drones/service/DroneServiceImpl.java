@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.shishir.drones.constants.MessageConstants.DRONE_NOT_FOUND_FOR_SERIAL_NUMBER;
+
 @Transactional
 @Service
 public class DroneServiceImpl implements DroneService {
@@ -69,7 +71,7 @@ public class DroneServiceImpl implements DroneService {
         if (droneOptional.isPresent()) {
             return droneOptional.get().getBatteryCapacity();
         }
-        throw new DroneNotFoundException("Drone not found for serialNumber: " + serialNumber);
+        throw new DroneNotFoundException(String.format(DRONE_NOT_FOUND_FOR_SERIAL_NUMBER, serialNumber));
     }
 
     @Override
@@ -94,7 +96,7 @@ public class DroneServiceImpl implements DroneService {
 
             return Optional.of(droneRepository.save(drone));
         } else {
-            throw new DroneNotFoundException("Drone not found for serialNumber: " + serialNumber);
+            throw new DroneNotFoundException(String.format(DRONE_NOT_FOUND_FOR_SERIAL_NUMBER, serialNumber));
         }
     }
 

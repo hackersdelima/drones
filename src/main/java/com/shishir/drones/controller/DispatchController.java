@@ -79,7 +79,7 @@ public class DispatchController {
             log.error("Exception", ex);
             return new ResponseEntity<>(new GenericResponseDto<>(
                     HttpStatus.NOT_FOUND.value(),
-                    DRONE_NOT_FOUND,
+                    ex.getMessage(),
                     null
             ), HttpStatus.NOT_FOUND);
         }
@@ -87,9 +87,9 @@ public class DispatchController {
 
     @PostMapping("/drones/{serialNumber}/medications")
     public ResponseEntity<GenericResponseDto<List<MedicationResponse>>> loadMedications(@PathVariable String serialNumber, @RequestBody List<MedicationRequest> request) {
-        List<Medication> medications = medicationMapper.toMedications(request);
-        if (!medications.isEmpty()) {
-            try {
+        try {
+            List<Medication> medications = medicationMapper.toMedications(request);
+            if (!medications.isEmpty()) {
                 Optional<Drone> droneOptional = droneService.loadMedications(serialNumber, medications);
                 if (droneOptional.isPresent()) {
                     return new ResponseEntity<>(new GenericResponseDto<>(
@@ -98,28 +98,21 @@ public class DispatchController {
                             medicationMapper.toMedicationResponses(droneOptional.get().getMedications())
                     ), HttpStatus.OK);
                 }
-            } catch (DroneNotFoundException ex) {
-                log.error("Exception", ex);
-                return new ResponseEntity<>(new GenericResponseDto<>(
-                        HttpStatus.NOT_FOUND.value(),
-                        DRONE_NOT_FOUND,
-                        null
-                ), HttpStatus.NOT_FOUND);
-            } catch (LowBatteryCapacityException lex) {
-                log.error("Exception", lex);
-                return new ResponseEntity<>(new GenericResponseDto<>(
-                        HttpStatus.BAD_REQUEST.value(),
-                        DONE_LOW_BATTERY_CAPACITY,
-                        null
-                ), HttpStatus.BAD_REQUEST);
-            } catch (WeightLimitExceededException wex) {
-                log.error("Exception", wex);
-                return new ResponseEntity<>(new GenericResponseDto<>(
-                        HttpStatus.BAD_REQUEST.value(),
-                        DONE_WEIGHT_LIMIT_EXCEEDED,
-                        null
-                ), HttpStatus.BAD_REQUEST);
             }
+        } catch (DroneNotFoundException ex) {
+            log.error("Exception", ex);
+            return new ResponseEntity<>(new GenericResponseDto<>(
+                    HttpStatus.NOT_FOUND.value(),
+                    ex.getMessage(),
+                    null
+            ), HttpStatus.NOT_FOUND);
+        } catch (LowBatteryCapacityException | WeightLimitExceededException ex) {
+            log.error("Exception", ex);
+            return new ResponseEntity<>(new GenericResponseDto<>(
+                    HttpStatus.BAD_REQUEST.value(),
+                    ex.getMessage(),
+                    null
+            ), HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(new GenericResponseDto<>(
