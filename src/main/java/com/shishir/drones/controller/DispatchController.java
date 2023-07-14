@@ -3,6 +3,7 @@ package com.shishir.drones.controller;
 import com.shishir.drones.dto.*;
 import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.Medication;
+import com.shishir.drones.exception.DroneNotFoundException;
 import com.shishir.drones.mapper.DroneMapper;
 import com.shishir.drones.mapper.MedicationMapper;
 import com.shishir.drones.service.DroneService;
@@ -72,8 +73,8 @@ public class DispatchController {
                     DRONE_BATTERY_LEVEL_FOUND,
                     batteryLevel
             ), HttpStatus.OK);
-        } catch (Exception ex) {
-            log.error("Exception in get drone battery level", ex);
+        } catch (DroneNotFoundException ex) {
+            log.error("Exception", ex);
             return new ResponseEntity<>(new GenericResponseDto<>(
                     HttpStatus.NOT_FOUND.value(),
                     DRONE_NOT_FOUND,
@@ -86,13 +87,22 @@ public class DispatchController {
     public ResponseEntity<GenericResponseDto<List<MedicationResponse>>> loadMedications(@PathVariable String serialNumber, @RequestBody List<MedicationRequest> request) {
         List<Medication> medications = medicationMapper.toMedications(request);
         if (!medications.isEmpty()) {
-            Optional<Drone> droneOptional = droneService.loadMedications(serialNumber, medications);
-            if (droneOptional.isPresent()) {
+            try {
+                Optional<Drone> droneOptional = droneService.loadMedications(serialNumber, medications);
+                if (droneOptional.isPresent()) {
+                    return new ResponseEntity<>(new GenericResponseDto<>(
+                            HttpStatus.OK.value(),
+                            MEDICATIONS_LOADED,
+                            medicationMapper.toMedicationResponses(droneOptional.get().getMedications())
+                    ), HttpStatus.OK);
+                }
+            } catch (DroneNotFoundException ex) {
+                log.error("Exception", ex);
                 return new ResponseEntity<>(new GenericResponseDto<>(
-                        HttpStatus.OK.value(),
-                        MEDICATIONS_LOADED,
-                        medicationMapper.toMedicationResponses(droneOptional.get().getMedications())
-                ), HttpStatus.OK);
+                        HttpStatus.NOT_FOUND.value(),
+                        DRONE_NOT_FOUND,
+                        null
+                ), HttpStatus.NOT_FOUND);
             }
         }
 

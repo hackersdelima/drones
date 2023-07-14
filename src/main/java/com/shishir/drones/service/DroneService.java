@@ -2,6 +2,7 @@ package com.shishir.drones.service;
 
 import com.shishir.drones.entity.Drone;
 import com.shishir.drones.entity.Medication;
+import com.shishir.drones.exception.DroneNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,9 +10,9 @@ import java.util.Optional;
 public interface DroneService extends GenericCrudService<Drone, String> {
     List<Drone> getAvailableDrones();
 
-    double getBatteryLevel(final String serialNumber);
+    double getBatteryLevel(final String serialNumber) throws DroneNotFoundException;
 
-    Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications);
+    Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications) throws  DroneNotFoundException;
 
     List<Medication> getMedications(final String serialNumber);
 }

@@ -5,6 +5,7 @@ import com.shishir.drones.entity.DroneRepository;
 import com.shishir.drones.entity.Medication;
 import com.shishir.drones.entity.MedicationRepository;
 import com.shishir.drones.enums.State;
+import com.shishir.drones.exception.DroneNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,17 +58,16 @@ public class DroneServiceImpl implements DroneService {
     }
 
     @Override
-    public double getBatteryLevel(final String serialNumber) {
+    public double getBatteryLevel(final String serialNumber) throws DroneNotFoundException {
         Optional<Drone> droneOptional = this.getOne(serialNumber);
         if (droneOptional.isPresent()) {
             return droneOptional.get().getBatteryCapacity();
         }
-//todo throw drone not found
-        throw new RuntimeException();
+        throw new DroneNotFoundException("Drone not found for serialNumber: " + serialNumber);
     }
 
     @Override
-    public Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications) {
+    public Optional<Drone> loadMedications(final String serialNumber, final List<Medication> medications) throws DroneNotFoundException {
         Optional<Drone> droneOptional = this.getOne(serialNumber);
         if (droneOptional.isPresent()) {
             Drone drone = droneOptional.get();
@@ -84,9 +84,9 @@ public class DroneServiceImpl implements DroneService {
             medications.forEach(medication -> medication.setDrone(drone));
 
             return Optional.of(droneRepository.save(drone));
+        } else {
+            throw new DroneNotFoundException("Drone not found for serialNumber: " + serialNumber);
         }
-//todo throw drone not found
-        return Optional.empty();
     }
 
     @Override
